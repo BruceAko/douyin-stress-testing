@@ -21,13 +21,7 @@ var disableKeepalive bool
 var taskType string
 var task *boomer.Task
 
-func feed() {
-	url := "/douyin/feed/"
-	method := "GET"
-	request, err := http.NewRequest(method, address+url, nil)
-	if err != nil {
-		log.Fatalf("%v\n", err)
-	}
+func worker_do(request *http.Request) {
 	startTime := time.Now()
 	response, err := client.Do(request)
 	elapsed := time.Since(startTime)
@@ -52,6 +46,16 @@ func feed() {
 		}
 		response.Body.Close()
 	}
+}
+
+func feed() {
+	url := "/douyin/feed/"
+	method := "GET"
+	request, err := http.NewRequest(method, address+url, nil)
+	if err != nil {
+		log.Fatalf("%v\n", err)
+	}
+	worker_do(request)
 }
 
 func register() {
@@ -61,30 +65,7 @@ func register() {
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	startTime := time.Now()
-	response, err := client.Do(request)
-	elapsed := time.Since(startTime)
-	if err != nil {
-		if verbose {
-			log.Printf("%v\n", err)
-		}
-		boomer.RecordFailure("http", "error", 0.0, err.Error())
-	} else {
-		boomer.RecordSuccess("http", strconv.Itoa(response.StatusCode),
-			elapsed.Nanoseconds()/int64(time.Millisecond), response.ContentLength)
-		if verbose {
-			body, err := io.ReadAll(response.Body)
-			if err != nil {
-				log.Printf("%v\n", err)
-			} else {
-				log.Printf("Status Code: %d\n", response.StatusCode)
-				log.Println(string(body))
-			}
-		} else {
-			io.Copy(io.Discard, response.Body)
-		}
-		response.Body.Close()
-	}
+	worker_do(request)
 }
 
 func login() {
@@ -94,30 +75,7 @@ func login() {
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	startTime := time.Now()
-	response, err := client.Do(request)
-	elapsed := time.Since(startTime)
-	if err != nil {
-		if verbose {
-			log.Printf("%v\n", err)
-		}
-		boomer.RecordFailure("http", "error", 0.0, err.Error())
-	} else {
-		boomer.RecordSuccess("http", strconv.Itoa(response.StatusCode),
-			elapsed.Nanoseconds()/int64(time.Millisecond), response.ContentLength)
-		if verbose {
-			body, err := io.ReadAll(response.Body)
-			if err != nil {
-				log.Printf("%v\n", err)
-			} else {
-				log.Printf("Status Code: %d\n", response.StatusCode)
-				log.Println(string(body))
-			}
-		} else {
-			io.Copy(io.Discard, response.Body)
-		}
-		response.Body.Close()
-	}
+	worker_do(request)
 }
 
 func user() {
@@ -127,30 +85,7 @@ func user() {
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	startTime := time.Now()
-	response, err := client.Do(request)
-	elapsed := time.Since(startTime)
-	if err != nil {
-		if verbose {
-			log.Printf("%v\n", err)
-		}
-		boomer.RecordFailure("http", "error", 0.0, err.Error())
-	} else {
-		boomer.RecordSuccess("http", strconv.Itoa(response.StatusCode),
-			elapsed.Nanoseconds()/int64(time.Millisecond), response.ContentLength)
-		if verbose {
-			body, err := io.ReadAll(response.Body)
-			if err != nil {
-				log.Printf("%v\n", err)
-			} else {
-				log.Printf("Status Code: %d\n", response.StatusCode)
-				log.Println(string(body))
-			}
-		} else {
-			io.Copy(io.Discard, response.Body)
-		}
-		response.Body.Close()
-	}
+	worker_do(request)
 }
 
 func publish_action() {
@@ -160,30 +95,7 @@ func publish_action() {
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	startTime := time.Now()
-	response, err := client.Do(request)
-	elapsed := time.Since(startTime)
-	if err != nil {
-		if verbose {
-			log.Printf("%v\n", err)
-		}
-		boomer.RecordFailure("http", "error", 0.0, err.Error())
-	} else {
-		boomer.RecordSuccess("http", strconv.Itoa(response.StatusCode),
-			elapsed.Nanoseconds()/int64(time.Millisecond), response.ContentLength)
-		if verbose {
-			body, err := io.ReadAll(response.Body)
-			if err != nil {
-				log.Printf("%v\n", err)
-			} else {
-				log.Printf("Status Code: %d\n", response.StatusCode)
-				log.Println(string(body))
-			}
-		} else {
-			io.Copy(io.Discard, response.Body)
-		}
-		response.Body.Close()
-	}
+	worker_do(request)
 }
 
 func publish_list() {
@@ -193,30 +105,7 @@ func publish_list() {
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	startTime := time.Now()
-	response, err := client.Do(request)
-	elapsed := time.Since(startTime)
-	if err != nil {
-		if verbose {
-			log.Printf("%v\n", err)
-		}
-		boomer.RecordFailure("http", "error", 0.0, err.Error())
-	} else {
-		boomer.RecordSuccess("http", strconv.Itoa(response.StatusCode),
-			elapsed.Nanoseconds()/int64(time.Millisecond), response.ContentLength)
-		if verbose {
-			body, err := io.ReadAll(response.Body)
-			if err != nil {
-				log.Printf("%v\n", err)
-			} else {
-				log.Printf("Status Code: %d\n", response.StatusCode)
-				log.Println(string(body))
-			}
-		} else {
-			io.Copy(io.Discard, response.Body)
-		}
-		response.Body.Close()
-	}
+	worker_do(request)
 }
 
 func like_action() {
@@ -226,30 +115,7 @@ func like_action() {
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	startTime := time.Now()
-	response, err := client.Do(request)
-	elapsed := time.Since(startTime)
-	if err != nil {
-		if verbose {
-			log.Printf("%v\n", err)
-		}
-		boomer.RecordFailure("http", "error", 0.0, err.Error())
-	} else {
-		boomer.RecordSuccess("http", strconv.Itoa(response.StatusCode),
-			elapsed.Nanoseconds()/int64(time.Millisecond), response.ContentLength)
-		if verbose {
-			body, err := io.ReadAll(response.Body)
-			if err != nil {
-				log.Printf("%v\n", err)
-			} else {
-				log.Printf("Status Code: %d\n", response.StatusCode)
-				log.Println(string(body))
-			}
-		} else {
-			io.Copy(io.Discard, response.Body)
-		}
-		response.Body.Close()
-	}
+	worker_do(request)
 }
 
 func like_list() {
@@ -259,30 +125,7 @@ func like_list() {
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	startTime := time.Now()
-	response, err := client.Do(request)
-	elapsed := time.Since(startTime)
-	if err != nil {
-		if verbose {
-			log.Printf("%v\n", err)
-		}
-		boomer.RecordFailure("http", "error", 0.0, err.Error())
-	} else {
-		boomer.RecordSuccess("http", strconv.Itoa(response.StatusCode),
-			elapsed.Nanoseconds()/int64(time.Millisecond), response.ContentLength)
-		if verbose {
-			body, err := io.ReadAll(response.Body)
-			if err != nil {
-				log.Printf("%v\n", err)
-			} else {
-				log.Printf("Status Code: %d\n", response.StatusCode)
-				log.Println(string(body))
-			}
-		} else {
-			io.Copy(io.Discard, response.Body)
-		}
-		response.Body.Close()
-	}
+	worker_do(request)
 }
 func comment_action() {
 	url := "/douyin/comment/action/?token=&video_id=&action_type="
@@ -291,30 +134,7 @@ func comment_action() {
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	startTime := time.Now()
-	response, err := client.Do(request)
-	elapsed := time.Since(startTime)
-	if err != nil {
-		if verbose {
-			log.Printf("%v\n", err)
-		}
-		boomer.RecordFailure("http", "error", 0.0, err.Error())
-	} else {
-		boomer.RecordSuccess("http", strconv.Itoa(response.StatusCode),
-			elapsed.Nanoseconds()/int64(time.Millisecond), response.ContentLength)
-		if verbose {
-			body, err := io.ReadAll(response.Body)
-			if err != nil {
-				log.Printf("%v\n", err)
-			} else {
-				log.Printf("Status Code: %d\n", response.StatusCode)
-				log.Println(string(body))
-			}
-		} else {
-			io.Copy(io.Discard, response.Body)
-		}
-		response.Body.Close()
-	}
+	worker_do(request)
 }
 
 func comment_list() {
@@ -324,30 +144,7 @@ func comment_list() {
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	startTime := time.Now()
-	response, err := client.Do(request)
-	elapsed := time.Since(startTime)
-	if err != nil {
-		if verbose {
-			log.Printf("%v\n", err)
-		}
-		boomer.RecordFailure("http", "error", 0.0, err.Error())
-	} else {
-		boomer.RecordSuccess("http", strconv.Itoa(response.StatusCode),
-			elapsed.Nanoseconds()/int64(time.Millisecond), response.ContentLength)
-		if verbose {
-			body, err := io.ReadAll(response.Body)
-			if err != nil {
-				log.Printf("%v\n", err)
-			} else {
-				log.Printf("Status Code: %d\n", response.StatusCode)
-				log.Println(string(body))
-			}
-		} else {
-			io.Copy(io.Discard, response.Body)
-		}
-		response.Body.Close()
-	}
+	worker_do(request)
 }
 
 func relation_action() {
@@ -357,30 +154,7 @@ func relation_action() {
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	startTime := time.Now()
-	response, err := client.Do(request)
-	elapsed := time.Since(startTime)
-	if err != nil {
-		if verbose {
-			log.Printf("%v\n", err)
-		}
-		boomer.RecordFailure("http", "error", 0.0, err.Error())
-	} else {
-		boomer.RecordSuccess("http", strconv.Itoa(response.StatusCode),
-			elapsed.Nanoseconds()/int64(time.Millisecond), response.ContentLength)
-		if verbose {
-			body, err := io.ReadAll(response.Body)
-			if err != nil {
-				log.Printf("%v\n", err)
-			} else {
-				log.Printf("Status Code: %d\n", response.StatusCode)
-				log.Println(string(body))
-			}
-		} else {
-			io.Copy(io.Discard, response.Body)
-		}
-		response.Body.Close()
-	}
+	worker_do(request)
 }
 
 func follow_list() {
@@ -390,30 +164,7 @@ func follow_list() {
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	startTime := time.Now()
-	response, err := client.Do(request)
-	elapsed := time.Since(startTime)
-	if err != nil {
-		if verbose {
-			log.Printf("%v\n", err)
-		}
-		boomer.RecordFailure("http", "error", 0.0, err.Error())
-	} else {
-		boomer.RecordSuccess("http", strconv.Itoa(response.StatusCode),
-			elapsed.Nanoseconds()/int64(time.Millisecond), response.ContentLength)
-		if verbose {
-			body, err := io.ReadAll(response.Body)
-			if err != nil {
-				log.Printf("%v\n", err)
-			} else {
-				log.Printf("Status Code: %d\n", response.StatusCode)
-				log.Println(string(body))
-			}
-		} else {
-			io.Copy(io.Discard, response.Body)
-		}
-		response.Body.Close()
-	}
+	worker_do(request)
 }
 
 func follower_list() {
@@ -423,30 +174,7 @@ func follower_list() {
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	startTime := time.Now()
-	response, err := client.Do(request)
-	elapsed := time.Since(startTime)
-	if err != nil {
-		if verbose {
-			log.Printf("%v\n", err)
-		}
-		boomer.RecordFailure("http", "error", 0.0, err.Error())
-	} else {
-		boomer.RecordSuccess("http", strconv.Itoa(response.StatusCode),
-			elapsed.Nanoseconds()/int64(time.Millisecond), response.ContentLength)
-		if verbose {
-			body, err := io.ReadAll(response.Body)
-			if err != nil {
-				log.Printf("%v\n", err)
-			} else {
-				log.Printf("Status Code: %d\n", response.StatusCode)
-				log.Println(string(body))
-			}
-		} else {
-			io.Copy(io.Discard, response.Body)
-		}
-		response.Body.Close()
-	}
+	worker_do(request)
 }
 
 func friend_list() {
@@ -456,30 +184,7 @@ func friend_list() {
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	startTime := time.Now()
-	response, err := client.Do(request)
-	elapsed := time.Since(startTime)
-	if err != nil {
-		if verbose {
-			log.Printf("%v\n", err)
-		}
-		boomer.RecordFailure("http", "error", 0.0, err.Error())
-	} else {
-		boomer.RecordSuccess("http", strconv.Itoa(response.StatusCode),
-			elapsed.Nanoseconds()/int64(time.Millisecond), response.ContentLength)
-		if verbose {
-			body, err := io.ReadAll(response.Body)
-			if err != nil {
-				log.Printf("%v\n", err)
-			} else {
-				log.Printf("Status Code: %d\n", response.StatusCode)
-				log.Println(string(body))
-			}
-		} else {
-			io.Copy(io.Discard, response.Body)
-		}
-		response.Body.Close()
-	}
+	worker_do(request)
 }
 
 func message_action() {
@@ -489,30 +194,7 @@ func message_action() {
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	startTime := time.Now()
-	response, err := client.Do(request)
-	elapsed := time.Since(startTime)
-	if err != nil {
-		if verbose {
-			log.Printf("%v\n", err)
-		}
-		boomer.RecordFailure("http", "error", 0.0, err.Error())
-	} else {
-		boomer.RecordSuccess("http", strconv.Itoa(response.StatusCode),
-			elapsed.Nanoseconds()/int64(time.Millisecond), response.ContentLength)
-		if verbose {
-			body, err := io.ReadAll(response.Body)
-			if err != nil {
-				log.Printf("%v\n", err)
-			} else {
-				log.Printf("Status Code: %d\n", response.StatusCode)
-				log.Println(string(body))
-			}
-		} else {
-			io.Copy(io.Discard, response.Body)
-		}
-		response.Body.Close()
-	}
+	worker_do(request)
 }
 
 func chat() {
@@ -522,30 +204,7 @@ func chat() {
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	startTime := time.Now()
-	response, err := client.Do(request)
-	elapsed := time.Since(startTime)
-	if err != nil {
-		if verbose {
-			log.Printf("%v\n", err)
-		}
-		boomer.RecordFailure("http", "error", 0.0, err.Error())
-	} else {
-		boomer.RecordSuccess("http", strconv.Itoa(response.StatusCode),
-			elapsed.Nanoseconds()/int64(time.Millisecond), response.ContentLength)
-		if verbose {
-			body, err := io.ReadAll(response.Body)
-			if err != nil {
-				log.Printf("%v\n", err)
-			} else {
-				log.Printf("Status Code: %d\n", response.StatusCode)
-				log.Println(string(body))
-			}
-		} else {
-			io.Copy(io.Discard, response.Body)
-		}
-		response.Body.Close()
-	}
+	worker_do(request)
 }
 
 func main() {
@@ -669,5 +328,8 @@ func main() {
 	default:
 		log.Fatalln("Wrong task type.")
 	}
+
+	//登录，获取token
+
 	boomer.Run(task)
 }

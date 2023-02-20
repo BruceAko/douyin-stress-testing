@@ -15,6 +15,7 @@ go run stress_testing.go $(taskName)
 ```
 
 taskName包括十六个接口所对应的测试：
+
 feed
 register
 login
@@ -33,6 +34,7 @@ message_action
 chat
 
 3.打开浏览器 <http://127.0.0.1:8089>，即可在locust中监控各项指标
+
 重点关注Requests per second(吞吐量RPS)、Failed requests、90%，95%和99%的响应时间
 
 ## 压测结果
