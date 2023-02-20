@@ -23,3 +23,6 @@ vendor/
 
 # Go workspace file
 go.work
+
+# python cache
+__pycache__
