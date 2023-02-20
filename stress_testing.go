@@ -1,11 +1,16 @@
 package main
 
 import (
+	"bytes"
 	"crypto/tls"
 	"flag"
+	"fmt"
 	"io"
 	"log"
+	"mime/multipart"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -15,11 +20,14 @@ import (
 var client *http.Client
 var address string
 var verbose bool
-var timeout int
-var disableCompression bool
-var disableKeepalive bool
 var taskType string
 var task *boomer.Task
+var username string
+var password string
+var user_id string
+var token string
+var action_type string
+var video_id string
 
 func worker_do(request *http.Request) {
 	startTime := time.Now()
@@ -59,7 +67,7 @@ func feed() {
 }
 
 func register() {
-	url := "/douyin/user/register/?username=&password="
+	url := "/douyin/user/register/?username=" + username + "&password=" + password
 	method := "POST"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
@@ -69,7 +77,7 @@ func register() {
 }
 
 func login() {
-	url := "/douyin/user/login/?username=&password="
+	url := "/douyin/user/login/?username=" + username + "&password=" + password
 	method := "POST"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
@@ -79,7 +87,7 @@ func login() {
 }
 
 func user() {
-	url := "/douyin/user/?user_id=&token="
+	url := "/douyin/user/?user_id=" + user_id + "&token=" + token
 	method := "GET"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
@@ -91,7 +99,27 @@ func user() {
 func publish_action() {
 	url := "/douyin/publish/action/"
 	method := "POST"
-	request, err := http.NewRequest(method, address+url, nil)
+
+	payload := &bytes.Buffer{}
+	writer := multipart.NewWriter(payload)
+	file, errFile1 := os.Open("")
+	defer file.Close()
+	part1,
+		errFile1 := writer.CreateFormFile("data", filepath.Base(""))
+	_, errFile1 = io.Copy(part1, file)
+	if errFile1 != nil {
+		fmt.Println(errFile1)
+		return
+	}
+	_ = writer.WriteField("token", "")
+	_ = writer.WriteField("title", "")
+	err := writer.Close()
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	request, err := http.NewRequest(method, address+url, payload)
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
@@ -99,7 +127,7 @@ func publish_action() {
 }
 
 func publish_list() {
-	url := "/douyin/publish/list/?token=&user_id="
+	url := "/douyin/publish/list/?token=" + token + "&user_id=" + user_id
 	method := "GET"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
@@ -109,7 +137,7 @@ func publish_list() {
 }
 
 func like_action() {
-	url := "/douyin/favorite/action/?token=&video_id=&action_type="
+	url := "/douyin/favorite/action/?token=" + token + "&video_id=" + video_id + "&action_type=" + action_type
 	method := "POST"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
@@ -119,7 +147,7 @@ func like_action() {
 }
 
 func like_list() {
-	url := "/douyin/favorite/list/?user_id=&token="
+	url := "/douyin/favorite/list/?user_id=" + user_id + "&token=" + token
 	method := "GET"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
@@ -128,7 +156,7 @@ func like_list() {
 	worker_do(request)
 }
 func comment_action() {
-	url := "/douyin/comment/action/?token=&video_id=&action_type="
+	url := "/douyin/comment/action/?token=" + token + "&video_id=" + video_id + "&action_type=" + action_type
 	method := "POST"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
@@ -138,7 +166,7 @@ func comment_action() {
 }
 
 func comment_list() {
-	url := "/douyin/comment/list/?token=&video_id="
+	url := "/douyin/comment/list/?token=" + token + "&video_id=" + video_id
 	method := "GET"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
@@ -148,7 +176,7 @@ func comment_list() {
 }
 
 func relation_action() {
-	url := "/douyin/relation/action/?token=&to_user_id=&action_type="
+	url := "/douyin/relation/action/?token=" + token + "&to_user_id=" + user_id + "&action_type=" + action_type
 	method := "POST"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
@@ -158,7 +186,7 @@ func relation_action() {
 }
 
 func follow_list() {
-	url := "/douyin/relation/follow/list/?user_id=&token="
+	url := "/douyin/relation/follow/list/?user_id=" + user_id + "&token=" + token
 	method := "GET"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
@@ -168,7 +196,7 @@ func follow_list() {
 }
 
 func follower_list() {
-	url := "/douyin/relation/follower/list/?user_id=&token="
+	url := "/douyin/relation/follower/list/?user_id=" + user_id + "&token=" + token
 	method := "GET"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
@@ -178,7 +206,7 @@ func follower_list() {
 }
 
 func friend_list() {
-	url := "/douyin/relation/friend/list/?user_id=&token="
+	url := "/douyin/relation/friend/list/?user_id=" + user_id + "&token=" + token
 	method := "GET"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
@@ -188,7 +216,7 @@ func friend_list() {
 }
 
 func message_action() {
-	url := "/douyin/message/action/?token=&to_user_id=&action_type=&content="
+	url := "/douyin/message/action/?token=&to_user_id=" + user_id + "&action_type=" + action_type + "&content="
 	method := "POST"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
@@ -198,7 +226,7 @@ func message_action() {
 }
 
 func chat() {
-	url := "/douyin/message/chat/?token=&to_user_id="
+	url := "/douyin/message/chat/?token=" + token + "&to_user_id=" + user_id
 	method := "GET"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
@@ -211,9 +239,11 @@ func main() {
 	flag.StringVar(&taskType, "task-type", "", "the task you want to test")
 	flag.Parse()
 	address = "43.139.147.169"
-	timeout = 10
-	disableCompression = false
-	disableKeepalive = false
+	action_type = "1"
+	video_id = "1"
+	timeout := 10
+	disableCompression := false
+	disableKeepalive := false
 	verbose = false
 	http.DefaultTransport.(*http.Transport).MaxIdleConnsPerHost = 2000
 	tr := &http.Transport{
@@ -329,7 +359,7 @@ func main() {
 		log.Fatalln("Wrong task type.")
 	}
 
-	//登录，获取token
+	//登录，获取token和user_id
 
 	boomer.Run(task)
 }
