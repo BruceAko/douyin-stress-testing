@@ -103,13 +103,11 @@ func user() {
 func publish_action() {
 	url := "/douyin/publish/action/"
 	method := "POST"
-
 	payload := &bytes.Buffer{}
 	writer := multipart.NewWriter(payload)
-	file, errFile1 := os.Open("")
+	file, errFile1 := os.Open("dummy.py")
 	defer file.Close()
-	part1,
-		errFile1 := writer.CreateFormFile("data", filepath.Base(""))
+	part1, errFile1 := writer.CreateFormFile("data", filepath.Base(""))
 	_, errFile1 = io.Copy(part1, file)
 	if errFile1 != nil {
 		fmt.Println(errFile1)
@@ -122,7 +120,6 @@ func publish_action() {
 		fmt.Println(err)
 		return
 	}
-
 	request, err := http.NewRequest(method, address+url, payload)
 	if err != nil {
 		log.Fatalf("%v\n", err)
@@ -220,7 +217,7 @@ func friend_list() {
 }
 
 func message_action() {
-	url := "/douyin/message/action/?token=&to_user_id=" + user_id + "&action_type=" + action_type + "&content="
+	url := "/douyin/message/action/?token=&to_user_id=" + "2" + "&action_type=" + action_type + "&content=test"
 	method := "POST"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
