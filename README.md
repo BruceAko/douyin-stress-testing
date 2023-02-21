@@ -47,34 +47,6 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build --ldflags="-s -w" -o stress_testi
 
 ## 压测结果
 
-### feed
+请见《青训营后端结业项目答辩汇报文档》的性能测试部分
 
-### register
-
-### login
-
-### user
-
-### publish_action
-
-### publish_list
-
-### like_action
-
-### like_list
-
-### comment_action
-
-### comment_list
-
-### relation_action
-
-### follow_list
-
-### follower_list
-
-### friend_list
-
-### message_action
-
-### chat
+[压测结果](https://gzd0wrb2k4.feishu.cn/docx/TlUxdrUiOoT9E8xiN4Ocwhhpnig#doxcnzYQ7ltoNzjIeWnA9uWBrrc)
