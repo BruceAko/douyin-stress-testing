@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"crypto/tls"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io"
@@ -53,6 +54,9 @@ func worker_do(request *http.Request) {
 			io.Copy(io.Discard, response.Body)
 		}
 		response.Body.Close()
+		if err != nil {
+			log.Printf("%v\n", err)
+		}
 	}
 }
 
@@ -236,9 +240,12 @@ func chat() {
 }
 
 func main() {
-	flag.StringVar(&taskType, "task-type", "", "the task you want to test")
+	flag.StringVar(&taskType, "task", "", "the task you want to test")
 	flag.Parse()
-	address = "43.139.147.169"
+	fmt.Println(taskType)
+	address = "http://43.139.147.169:8070"
+	username = "stress_testing"
+	password = "stress_testing"
 	action_type = "1"
 	video_id = "1"
 	timeout := 10
@@ -360,6 +367,36 @@ func main() {
 	}
 
 	//登录，获取token和user_id
-
+	url := "/douyin/user/login/?username=" + username + "&password=" + password
+	method := "POST"
+	request, err := http.NewRequest(method, address+url, nil)
+	if err != nil {
+		log.Fatalf("%v\n", err)
+	}
+	response, err := client.Do(request)
+	if err != nil {
+		log.Printf("%v\n", err)
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		log.Printf("%v\n", err)
+	}
+	type loginResponse struct {
+		StatusCode int    `json:"status_code"`
+		StatusMsg  string `json:"status_msg"`
+		UserId     int    `json:"user_id"`
+		Token      string `json:"token"`
+	}
+	var login_response loginResponse
+	err = json.Unmarshal(body, &login_response)
+	if err != nil {
+		log.Printf("%v\n", err)
+	}
+	user_id = strconv.Itoa(login_response.UserId)
+	token = login_response.Token
+	err = response.Body.Close()
+	if err != nil {
+		log.Printf("%v\n", err)
+	}
 	boomer.Run(task)
 }
