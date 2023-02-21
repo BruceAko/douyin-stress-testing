@@ -249,7 +249,7 @@ func main() {
 	video_id = "1"
 	timeout := 10
 	disableCompression := false
-	disableKeepalive := true
+	disableKeepalive := false
 	verbose = false
 	http.DefaultTransport.(*http.Transport).MaxIdleConnsPerHost = 2000
 	tr := &http.Transport{
