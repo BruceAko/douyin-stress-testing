@@ -1,4 +1,4 @@
-module go-stress-testing
+module github.com/BruceAko/douyin-stress-testing
 
 go 1.19
 

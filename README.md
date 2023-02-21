@@ -11,7 +11,7 @@ locust --master -f dummy.py
 2.另起一终端，运行压力测试程序stress_testing.go
 
 ```shell
-go run stress_testing.go $(taskName)
+./stress_testing --task $(taskName)
 ```
 
 taskName包括十六个接口所对应的测试：
