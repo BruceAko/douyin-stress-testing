@@ -217,7 +217,7 @@ func friend_list() {
 }
 
 func message_action() {
-	url := "/douyin/message/action/?token=&to_user_id=" + "2" + "&action_type=" + action_type + "&content=test"
+	url := "/douyin/message/action/?token=" + token + "&to_user_id=" + user_id + "&action_type=" + action_type + "&content="
 	method := "POST"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
