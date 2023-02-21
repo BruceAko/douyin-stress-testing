@@ -242,7 +242,6 @@ func chat() {
 func main() {
 	flag.StringVar(&taskType, "task", "", "the task you want to test")
 	flag.Parse()
-	fmt.Println(taskType)
 	address = "http://43.139.147.169:8070"
 	username = "stress_testing"
 	password = "stress_testing"
@@ -250,7 +249,7 @@ func main() {
 	video_id = "1"
 	timeout := 10
 	disableCompression := false
-	disableKeepalive := false
+	disableKeepalive := true
 	verbose = false
 	http.DefaultTransport.(*http.Transport).MaxIdleConnsPerHost = 2000
 	tr := &http.Transport{
