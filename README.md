@@ -37,6 +37,14 @@ chat
 
 重点关注Requests per second(吞吐量RPS)、Failed requests、90%，95%和99%的响应时间
 
+## 说明
+
+将编译好的程序放在服务器上运行时可能出现GLIBC版本号对不上的情况，因此需要交叉编译：
+
+```bash
+CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build --ldflags="-s -w" -o stress_testing
+```
+
 ## 压测结果
 
 ### feed
