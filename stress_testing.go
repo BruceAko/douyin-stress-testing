@@ -5,13 +5,10 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"flag"
-	"fmt"
 	"io"
 	"log"
-	"mime/multipart"
 	"net/http"
 	"os"
-	"path/filepath"
 	"strconv"
 	"time"
 
@@ -103,24 +100,11 @@ func user() {
 func publish_action() {
 	url := "/douyin/publish/action/"
 	method := "POST"
-	payload := &bytes.Buffer{}
-	writer := multipart.NewWriter(payload)
-	file, errFile1 := os.Open("dummy.py")
-	defer file.Close()
-	part1, errFile1 := writer.CreateFormFile("data", filepath.Base(""))
-	_, errFile1 = io.Copy(part1, file)
-	if errFile1 != nil {
-		fmt.Println(errFile1)
-		return
-	}
-	_ = writer.WriteField("token", "")
-	_ = writer.WriteField("title", "")
-	err := writer.Close()
+	postBody, err := os.ReadFile("dummy.py")
 	if err != nil {
-		fmt.Println(err)
-		return
+		log.Fatalf("%v\n", err)
 	}
-	request, err := http.NewRequest(method, address+url, payload)
+	request, err := http.NewRequest(method, address+url, bytes.NewBuffer(postBody))
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
