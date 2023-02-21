@@ -8,7 +8,7 @@
 locust --master -f dummy.py
 ```
 
-2.另起一终端，运行压力测试程序stress_testing.go
+2.另起一终端，运行压力测试程序stress_testing
 
 ```shell
 ./stress_testing --task $(taskName)
