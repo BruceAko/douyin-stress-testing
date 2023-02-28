@@ -26,6 +26,22 @@ var user_id string
 var token string
 var action_type string
 var video_id string
+var task1 *boomer.Task
+var task2 *boomer.Task
+var task3 *boomer.Task
+var task4 *boomer.Task
+var task5 *boomer.Task
+var task6 *boomer.Task
+var task7 *boomer.Task
+var task8 *boomer.Task
+var task9 *boomer.Task
+var task10 *boomer.Task
+var task11 *boomer.Task
+var task12 *boomer.Task
+var task13 *boomer.Task
+var task14 *boomer.Task
+var task15 *boomer.Task
+var task16 *boomer.Task
 
 func worker_do(request *http.Request) {
 	startTime := time.Now()
@@ -54,6 +70,41 @@ func worker_do(request *http.Request) {
 		if err != nil {
 			log.Printf("%v\n", err)
 		}
+	}
+}
+
+func preLogin() {
+	//登录，获取token和user_id
+	url := "/douyin/user/login/?username=" + username + "&password=" + password
+	method := "POST"
+	request, err := http.NewRequest(method, address+url, nil)
+	if err != nil {
+		log.Fatalf("%v\n", err)
+	}
+	response, err := client.Do(request)
+	if err != nil {
+		log.Printf("%v\n", err)
+	}
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		log.Printf("%v\n", err)
+	}
+	type loginResponse struct {
+		StatusCode int    `json:"status_code"`
+		StatusMsg  string `json:"status_msg"`
+		UserId     int    `json:"user_id"`
+		Token      string `json:"token"`
+	}
+	var login_response loginResponse
+	err = json.Unmarshal(body, &login_response)
+	if err != nil {
+		log.Printf("%v\n", err)
+	}
+	user_id = strconv.Itoa(login_response.UserId)
+	token = login_response.Token
+	err = response.Body.Close()
+	if err != nil {
+		log.Printf("%v\n", err)
 	}
 }
 
@@ -220,6 +271,89 @@ func chat() {
 	worker_do(request)
 }
 
+func initTask() {
+	task1 = &boomer.Task{
+		Name:   "feed",
+		Weight: 10,
+		Fn:     feed,
+	}
+	task2 = &boomer.Task{
+		Name:   "register",
+		Weight: 10,
+		Fn:     register,
+	}
+	task3 = &boomer.Task{
+		Name:   "login",
+		Weight: 10,
+		Fn:     login,
+	}
+	task4 = &boomer.Task{
+		Name:   "user",
+		Weight: 10,
+		Fn:     user,
+	}
+	task5 = &boomer.Task{
+		Name:   "publish_action",
+		Weight: 10,
+		Fn:     publish_action,
+	}
+	task6 = &boomer.Task{
+		Name:   "publish_list",
+		Weight: 10,
+		Fn:     publish_list,
+	}
+	task7 = &boomer.Task{
+		Name:   "like_action",
+		Weight: 10,
+		Fn:     like_action,
+	}
+	task8 = &boomer.Task{
+		Name:   "like_listr",
+		Weight: 10,
+		Fn:     like_list,
+	}
+	task9 = &boomer.Task{
+		Name:   "comment_action",
+		Weight: 10,
+		Fn:     comment_action,
+	}
+	task10 = &boomer.Task{
+		Name:   "comment_list",
+		Weight: 10,
+		Fn:     comment_list,
+	}
+	task11 = &boomer.Task{
+		Name:   "relation_action",
+		Weight: 10,
+		Fn:     relation_action,
+	}
+	task12 = &boomer.Task{
+		Name:   "follow_list",
+		Weight: 10,
+		Fn:     follow_list,
+	}
+	task13 = &boomer.Task{
+		Name:   "follower_list",
+		Weight: 10,
+		Fn:     follower_list,
+	}
+	task14 = &boomer.Task{
+		Name:   "friend_list",
+		Weight: 10,
+		Fn:     friend_list,
+	}
+	task15 = &boomer.Task{
+		Name:   "message_action",
+		Weight: 10,
+		Fn:     message_action,
+	}
+	task16 = &boomer.Task{
+		Name:   "chat",
+		Weight: 10,
+		Fn:     chat,
+	}
+}
+
 func main() {
 	flag.StringVar(&taskType, "task", "", "the task you want to test")
 	flag.Parse()
@@ -245,138 +379,47 @@ func main() {
 		Transport: tr,
 		Timeout:   time.Duration(timeout) * time.Second,
 	}
+	initTask()
 	switch taskType {
 	case "feed":
-		task = &boomer.Task{
-			Name:   "feed",
-			Weight: 10,
-			Fn:     feed,
-		}
+		task = task1
 	case "register":
-		task = &boomer.Task{
-			Name:   "register",
-			Weight: 10,
-			Fn:     register,
-		}
+		task = task2
 	case "login":
-		task = &boomer.Task{
-			Name:   "login",
-			Weight: 10,
-			Fn:     login,
-		}
+		task = task3
 	case "user":
-		task = &boomer.Task{
-			Name:   "user",
-			Weight: 10,
-			Fn:     user,
-		}
+		task = task4
 	case "publish_action":
-		task = &boomer.Task{
-			Name:   "publish_action",
-			Weight: 10,
-			Fn:     publish_action,
-		}
+		task = task5
 	case "publish_list":
-		task = &boomer.Task{
-			Name:   "publish_list",
-			Weight: 10,
-			Fn:     publish_list,
-		}
+		task = task6
 	case "like_action":
-		task = &boomer.Task{
-			Name:   "like_action",
-			Weight: 10,
-			Fn:     like_action,
-		}
+		task = task7
 	case "like_list":
-		task = &boomer.Task{
-			Name:   "like_listr",
-			Weight: 10,
-			Fn:     like_list,
-		}
+		task = task8
 	case "comment_action":
-		task = &boomer.Task{
-			Name:   "comment_action",
-			Weight: 10,
-			Fn:     comment_action,
-		}
+		task = task9
 	case "comment_list":
-		task = &boomer.Task{
-			Name:   "comment_list",
-			Weight: 10,
-			Fn:     comment_list,
-		}
+		task = task10
 	case "relation_action":
-		task = &boomer.Task{
-			Name:   "relation_action",
-			Weight: 10,
-			Fn:     relation_action,
-		}
+		task = task11
 	case "follow_list":
-		task = &boomer.Task{
-			Name:   "follow_list",
-			Weight: 10,
-			Fn:     follow_list,
-		}
+		task = task12
 	case "follower_list":
-		task = &boomer.Task{
-			Name:   "follower_list",
-			Weight: 10,
-			Fn:     follower_list,
-		}
+		task = task13
 	case "friend_list":
-		task = &boomer.Task{
-			Name:   "friend_list",
-			Weight: 10,
-			Fn:     friend_list,
-		}
+		task = task14
 	case "message_action":
-		task = &boomer.Task{
-			Name:   "message_action",
-			Weight: 10,
-			Fn:     message_action,
-		}
+		task = task15
 	case "chat":
-		task = &boomer.Task{
-			Name:   "chat",
-			Weight: 10,
-			Fn:     chat,
-		}
+		task = task16
+	case "mix":
+		preLogin()
+		boomer.Run(task1, task2, task3, task4, task5, task6, task7, task8,
+			task9, task10, task11, task12, task13, task14, task15, task16)
 	default:
 		log.Fatalln("Wrong task type.")
 	}
-
-	//登录，获取token和user_id
-	url := "/douyin/user/login/?username=" + username + "&password=" + password
-	method := "POST"
-	request, err := http.NewRequest(method, address+url, nil)
-	if err != nil {
-		log.Fatalf("%v\n", err)
-	}
-	response, err := client.Do(request)
-	if err != nil {
-		log.Printf("%v\n", err)
-	}
-	body, err := io.ReadAll(response.Body)
-	if err != nil {
-		log.Printf("%v\n", err)
-	}
-	type loginResponse struct {
-		StatusCode int    `json:"status_code"`
-		StatusMsg  string `json:"status_msg"`
-		UserId     int    `json:"user_id"`
-		Token      string `json:"token"`
-	}
-	var login_response loginResponse
-	err = json.Unmarshal(body, &login_response)
-	if err != nil {
-		log.Printf("%v\n", err)
-	}
-	user_id = strconv.Itoa(login_response.UserId)
-	token = login_response.Token
-	err = response.Body.Close()
-	if err != nil {
-		log.Printf("%v\n", err)
-	}
+	preLogin()
 	boomer.Run(task)
 }
