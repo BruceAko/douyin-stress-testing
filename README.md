@@ -7,6 +7,7 @@
 ```shell
 locust --master -f dummy.py
 ```
+&nbsp;
 
 2.另起一终端，运行压力测试程序stress_testing
 
@@ -33,7 +34,10 @@ friend_list
 message_action
 chat
 
-以及以相同的权重调用十六个接口的混合测试：mix
+还可以用相同的权重调用十六个接口的混合测试：
+mix
+
+&nbsp;
 
 3.打开浏览器 <http://127.0.0.1:8089>，即可在locust中监控各项指标，并导出报告
 
