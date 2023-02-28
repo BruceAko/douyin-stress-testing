@@ -16,16 +16,17 @@ import (
 )
 
 var client *http.Client
-var address string
 var verbose bool
-var taskType string
-var task *boomer.Task
+var address string
+
 var username string
 var password string
-var user_id string
+var userID string
 var token string
-var action_type string
-var video_id string
+var actionType string
+var videoID string
+
+var task *boomer.Task
 var task1 *boomer.Task
 var task2 *boomer.Task
 var task3 *boomer.Task
@@ -43,7 +44,7 @@ var task14 *boomer.Task
 var task15 *boomer.Task
 var task16 *boomer.Task
 
-func worker_do(request *http.Request) {
+func workerDo(request *http.Request) {
 	startTime := time.Now()
 	response, err := client.Do(request)
 	elapsed := time.Since(startTime)
@@ -64,9 +65,12 @@ func worker_do(request *http.Request) {
 				log.Println(string(body))
 			}
 		} else {
-			io.Copy(io.Discard, response.Body)
+			_, err := io.Copy(io.Discard, response.Body)
+			if err != nil {
+				log.Printf("%v\n", err)
+			}
 		}
-		response.Body.Close()
+		err := response.Body.Close()
 		if err != nil {
 			log.Printf("%v\n", err)
 		}
@@ -95,13 +99,13 @@ func preLogin() {
 		UserId     int    `json:"user_id"`
 		Token      string `json:"token"`
 	}
-	var login_response loginResponse
-	err = json.Unmarshal(body, &login_response)
+	var responseData loginResponse
+	err = json.Unmarshal(body, &responseData)
 	if err != nil {
 		log.Printf("%v\n", err)
 	}
-	user_id = strconv.Itoa(login_response.UserId)
-	token = login_response.Token
+	userID = strconv.Itoa(responseData.UserId)
+	token = responseData.Token
 	err = response.Body.Close()
 	if err != nil {
 		log.Printf("%v\n", err)
@@ -115,7 +119,7 @@ func feed() {
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	worker_do(request)
+	workerDo(request)
 }
 
 func register() {
@@ -125,7 +129,7 @@ func register() {
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	worker_do(request)
+	workerDo(request)
 }
 
 func login() {
@@ -135,20 +139,20 @@ func login() {
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	worker_do(request)
+	workerDo(request)
 }
 
 func user() {
-	url := "/douyin/user/?user_id=" + user_id + "&token=" + token
+	url := "/douyin/user/?user_id=" + userID + "&token=" + token
 	method := "GET"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	worker_do(request)
+	workerDo(request)
 }
 
-func publish_action() {
+func publishAction() {
 	url := "/douyin/publish/action/"
 	method := "POST"
 	postBody, err := os.ReadFile("dummy.py")
@@ -159,116 +163,116 @@ func publish_action() {
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	worker_do(request)
+	workerDo(request)
 }
 
-func publish_list() {
-	url := "/douyin/publish/list/?token=" + token + "&user_id=" + user_id
+func publishList() {
+	url := "/douyin/publish/list/?token=" + token + "&user_id=" + userID
 	method := "GET"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	worker_do(request)
+	workerDo(request)
 }
 
-func like_action() {
-	url := "/douyin/favorite/action/?token=" + token + "&video_id=" + video_id + "&action_type=" + action_type
+func likeAction() {
+	url := "/douyin/favorite/action/?token=" + token + "&video_id=" + videoID + "&action_type=" + actionType
 	method := "POST"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	worker_do(request)
+	workerDo(request)
 }
 
-func like_list() {
-	url := "/douyin/favorite/list/?user_id=" + user_id + "&token=" + token
+func likeList() {
+	url := "/douyin/favorite/list/?user_id=" + userID + "&token=" + token
 	method := "GET"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	worker_do(request)
+	workerDo(request)
 }
-func comment_action() {
-	url := "/douyin/comment/action/?token=" + token + "&video_id=" + video_id + "&action_type=" + action_type
+func commentAction() {
+	url := "/douyin/comment/action/?token=" + token + "&video_id=" + videoID + "&action_type=" + actionType
 	method := "POST"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	worker_do(request)
+	workerDo(request)
 }
 
-func comment_list() {
-	url := "/douyin/comment/list/?token=" + token + "&video_id=" + video_id
+func commentList() {
+	url := "/douyin/comment/list/?token=" + token + "&video_id=" + videoID
 	method := "GET"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	worker_do(request)
+	workerDo(request)
 }
 
-func relation_action() {
-	url := "/douyin/relation/action/?token=" + token + "&to_user_id=" + user_id + "&action_type=" + action_type
+func relationAction() {
+	url := "/douyin/relation/action/?token=" + token + "&to_user_id=" + userID + "&action_type=" + actionType
 	method := "POST"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	worker_do(request)
+	workerDo(request)
 }
 
-func follow_list() {
-	url := "/douyin/relation/follow/list/?user_id=" + user_id + "&token=" + token
+func followList() {
+	url := "/douyin/relation/follow/list/?user_id=" + userID + "&token=" + token
 	method := "GET"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	worker_do(request)
+	workerDo(request)
 }
 
-func follower_list() {
-	url := "/douyin/relation/follower/list/?user_id=" + user_id + "&token=" + token
+func followerList() {
+	url := "/douyin/relation/follower/list/?user_id=" + userID + "&token=" + token
 	method := "GET"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	worker_do(request)
+	workerDo(request)
 }
 
-func friend_list() {
-	url := "/douyin/relation/friend/list/?user_id=" + user_id + "&token=" + token
+func friendList() {
+	url := "/douyin/relation/friend/list/?user_id=" + userID + "&token=" + token
 	method := "GET"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	worker_do(request)
+	workerDo(request)
 }
 
-func message_action() {
-	url := "/douyin/message/action/?token=" + token + "&to_user_id=" + user_id + "&action_type=" + action_type + "&content="
+func messageAction() {
+	url := "/douyin/message/action/?token=" + token + "&to_user_id=" + userID + "&action_type=" + actionType + "&content="
 	method := "POST"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	worker_do(request)
+	workerDo(request)
 }
 
 func chat() {
-	url := "/douyin/message/chat/?token=" + token + "&to_user_id=" + user_id
+	url := "/douyin/message/chat/?token=" + token + "&to_user_id=" + userID
 	method := "GET"
 	request, err := http.NewRequest(method, address+url, nil)
 	if err != nil {
 		log.Fatalf("%v\n", err)
 	}
-	worker_do(request)
+	workerDo(request)
 }
 
 func initTask() {
@@ -295,57 +299,57 @@ func initTask() {
 	task5 = &boomer.Task{
 		Name:   "publish_action",
 		Weight: 10,
-		Fn:     publish_action,
+		Fn:     publishAction,
 	}
 	task6 = &boomer.Task{
 		Name:   "publish_list",
 		Weight: 10,
-		Fn:     publish_list,
+		Fn:     publishList,
 	}
 	task7 = &boomer.Task{
 		Name:   "like_action",
 		Weight: 10,
-		Fn:     like_action,
+		Fn:     likeAction,
 	}
 	task8 = &boomer.Task{
 		Name:   "like_listr",
 		Weight: 10,
-		Fn:     like_list,
+		Fn:     likeList,
 	}
 	task9 = &boomer.Task{
 		Name:   "comment_action",
 		Weight: 10,
-		Fn:     comment_action,
+		Fn:     commentAction,
 	}
 	task10 = &boomer.Task{
 		Name:   "comment_list",
 		Weight: 10,
-		Fn:     comment_list,
+		Fn:     commentList,
 	}
 	task11 = &boomer.Task{
 		Name:   "relation_action",
 		Weight: 10,
-		Fn:     relation_action,
+		Fn:     relationAction,
 	}
 	task12 = &boomer.Task{
 		Name:   "follow_list",
 		Weight: 10,
-		Fn:     follow_list,
+		Fn:     followList,
 	}
 	task13 = &boomer.Task{
 		Name:   "follower_list",
 		Weight: 10,
-		Fn:     follower_list,
+		Fn:     followerList,
 	}
 	task14 = &boomer.Task{
 		Name:   "friend_list",
 		Weight: 10,
-		Fn:     friend_list,
+		Fn:     friendList,
 	}
 	task15 = &boomer.Task{
 		Name:   "message_action",
 		Weight: 10,
-		Fn:     message_action,
+		Fn:     messageAction,
 	}
 	task16 = &boomer.Task{
 		Name:   "chat",
@@ -355,30 +359,33 @@ func initTask() {
 }
 
 func main() {
+	var taskType string
 	flag.StringVar(&taskType, "task", "", "the task you want to test")
 	flag.Parse()
+
 	address = "http://43.139.147.169:8060"
 	username = "stress_testing"
 	password = "stress_testing"
-	action_type = "1"
-	video_id = "1"
-	timeout := 10
-	disableCompression := false
-	disableKeepalive := false
-	verbose = false
+	actionType = "1"
+	videoID = "1"
+
+	timeout := 10   //超时时间
+	verbose = false //调试开关
+
 	http.DefaultTransport.(*http.Transport).MaxIdleConnsPerHost = 2000
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{
 			InsecureSkipVerify: true,
 		},
 		MaxIdleConnsPerHost: 2000,
-		DisableCompression:  disableCompression,
-		DisableKeepAlives:   disableKeepalive,
+		DisableCompression:  false, //disableCompression
+		DisableKeepAlives:   false, //disableKeepalive
 	}
 	client = &http.Client{
 		Transport: tr,
 		Timeout:   time.Duration(timeout) * time.Second,
 	}
+
 	initTask()
 	switch taskType {
 	case "feed":
