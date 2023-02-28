@@ -33,6 +33,8 @@ friend_list
 message_action
 chat
 
+以及以相同的权重调用十六个接口的混合测试：mix
+
 3.打开浏览器 <http://127.0.0.1:8089>，即可在locust中监控各项指标，并导出报告
 
 重点关注Requests per second(吞吐量RPS)、Failed requests、90%，95%和99%的响应时间

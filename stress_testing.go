@@ -357,7 +357,7 @@ func initTask() {
 func main() {
 	flag.StringVar(&taskType, "task", "", "the task you want to test")
 	flag.Parse()
-	address = "http://43.139.147.169:8070"
+	address = "http://43.139.147.169:8060"
 	username = "stress_testing"
 	password = "stress_testing"
 	action_type = "1"
